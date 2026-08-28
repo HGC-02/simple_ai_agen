@@ -59,94 +59,125 @@ tools = [
             },
         },
     },
-   {
+       {
         "type": "function",
         "function": {
-            "name": "save_to_note",
-            "description": (
-                "當用戶要求記低東西時使用。模型必須自行從用戶的說話中"
-                "提取或總結出一個簡短的關鍵字作為檔案名稱（filename），"
-                "並將詳細內容以 JSON 結構記錄下來。"
-            ),
+            "name": "save_to_topic_note",
+            "description": "當用戶要求在特定主題子目錄下記低、儲存或更新筆記時使用。模型必須從對話中提取分類主題（topic）、檔案名稱（filename）與詳細內容（content），並以 JSON 結構進行合併儲存。",
             "parameters": {
                 "type": "object",
                 "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "筆記所屬的分類主題或子目錄名稱（例如：linux、python）"
+                    },
                     "filename": {
                         "type": "string",
-                        "description": (
-                            "用作檔案名稱的簡短摘要（例如：購物清單、"
-                            "linux指令筆記）"
-                        ),
+                        "description": "用作檔案名稱的簡短摘要"
                     },
                     "content": {
                         "type": "string",
-                        "description": "需要記錄的詳細內容",
-                    },
+                        "description": "需要記錄或合併的詳細內容"
+                    }
                 },
-                "required": ["filename", "content"],
+                "required": ["topic", "filename", "content"],
             },
         },
     },
+
     {
         "type": "function",
         "function": {
-            "name": "get_notes",
-            "description": "當用戶詢問之前記了什麼、查看記事簿、或者需要檢索歷史筆記時使用此工具。",
+            "name": "get_topic_notes",
+            "description": "當用戶要求查看、檢索或讀取某個特定主題子目錄下的筆記時使用。模型必須從對話中提取分類主題（topic）。",
             "parameters": {
                 "type": "object",
-                "properties": {},  # 不需要額外參數，直接讀取全部
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "要檢索的筆記分類主題或子目錄名稱（例如：linux、python）"
+                    }
+                },
+                "required": ["topic"],
             },
         },
     },
+
 ]
 
 
 # function of tools
-def get_notes():
-  # 改為對應當前專案資料夾下的 ai_notes
-  notes_dir = os.path.join(os.path.dirname(__file__), "ai_notes")
-  if not os.path.exists(notes_dir):
-    return "目前沒有任何記事簿檔案。"
+def save_to_topic_note(topic, filename, content):
+  # 防禦性檢查：若 topic 或 filename 丟失或為 None 賦予預設值
+  if not topic:
+    topic = "general"
+  if not filename:
+    filename = "unnamed_note"
 
-  files = os.listdir(notes_dir)
-  if not files:
-    return "記事簿目錄是空的。"
+  # 1. 建立在 ai_notes 底下的子目錄
+  base_dir = os.path.join(os.path.dirname(__file__), "ai_notes")
+  topic_dir = os.path.join(base_dir, topic)
+  os.makedirs(topic_dir, exist_ok=True)
 
-  all_notes = []
-  for file in files:
-    if file.endswith(".json"):
-      file_path = os.path.join(notes_dir, file)
-      try:
-        with open(file_path, "r", encoding="utf-8") as f:
-          all_notes.append(json.load(f))
-      except Exception:
-        continue
-
-  return json.dumps(all_notes, ensure_ascii=False, indent=2)
-
-
-def save_to_note(filename, content):
-  # 改為對應當前專案資料夾下的 ai_notes
-  notes_dir = os.path.join(os.path.dirname(__file__), "ai_notes")
-  os.makedirs(notes_dir, exist_ok=True)
-
-  # 清理檔名中的非法字元（避免路徑問題）
+  # 2. 清理檔名
   safe_filename = "".join(
       c for c in filename if c.isalnum() or c in (" ", "-", "_")
   ).strip()
   if not safe_filename:
     safe_filename = "unnamed_note"
 
-  file_path = os.path.join(notes_dir, f"{safe_filename}.json")
+  file_path = os.path.join(topic_dir, f"{safe_filename}.json")
 
-  # 組織成 JSON 格式的資料結構
-  note_data = {"filename": safe_filename, "content": content}
+  # 3. 讀取現有內容並進行合併
+  existing_data = []
+  if os.path.exists(file_path):
+    try:
+      with open(file_path, "r", encoding="utf-8") as f:
+        loaded = json.load(f)
+        if isinstance(loaded, list):
+          existing_data = loaded
+        else:
+          existing_data = [loaded]
+    except Exception:
+      existing_data = []
 
-  # 寫入獨立的 JSON 檔案
+  # 新增本次內容
+  new_entry = {"content": content}
+  existing_data.append(new_entry)
+
+  # 4. 寫回合併後的 JSON
   with open(file_path, "w", encoding="utf-8") as f:
-    json.dump(note_data, f, ensure_ascii=False, indent=2)
+    json.dump(existing_data, f, ensure_ascii=False, indent=2)
 
-  return f"成功建立筆記檔案：{safe_filename}.json，內容已 JSON 格式儲存。"
+  return (
+      f"成功在主題【{topic}】下更新筆記檔案：{safe_filename}.json，已完成內容合併。"
+  )
+
+def get_topic_notes(topic):
+  if not topic:
+    return "未指定要檢索的主題名稱。"
+    
+  base_dir = os.path.join(os.path.dirname(__file__), "ai_notes")
+  topic_dir = os.path.join(base_dir, topic)
+  
+  if not os.path.exists(topic_dir):
+    return f"找不到主題【{topic}】的分類目錄。"
+
+  files = os.listdir(topic_dir)
+  if not files:
+    return f"主題【{topic}】的目錄是空的。"
+
+  all_topic_notes = []
+  for file in files:
+    if file.endswith(".json"):
+      file_path = os.path.join(topic_dir, file)
+      try:
+        with open(file_path, "r", encoding="utf-8") as f:
+          all_topic_notes.append(json.load(f))
+      except Exception:
+        continue
+
+  return json.dumps(all_topic_notes, ensure_ascii=False, indent=2)
 
 def run_bash(command):
   try:
@@ -156,7 +187,11 @@ def run_bash(command):
     return result.stdout if result.returncode == 0 else result.stderr
   except Exception as e:
     return str(e)
+
 def save_to_calendar(date, content):
+  if not date:
+    date = "unnamed_date"
+    
   cal_dir = os.path.join(os.path.dirname(__file__), "ai_calendar")
   os.makedirs(cal_dir, exist_ok=True)
 
@@ -211,7 +246,6 @@ def chat_with_agent(prompt):
   response = requests.post(OLLAMA_URL, json=payload).json()
   message = response.get("message", {})
 
-  # 檢查模型是否要求調用工具
   if message.get("tool_calls"):
     messages.append(message)
 
@@ -220,21 +254,26 @@ def chat_with_agent(prompt):
       func_args = tool_call["function"]["arguments"]
 
       if isinstance(func_args, str):
-        func_args = json.loads(func_args)
+        try:
+          func_args = json.loads(func_args)
+        except Exception:
+          func_args = {}
 
       output = ""
       if func_name == "run_bash":
         output = run_bash(func_args.get("command", ""))
-      elif func_name == "save_to_note":
-        # 修正：將原本的 title 改為 filename，對應 tools 定義
-        output = save_to_note(
-            func_args.get("filename"), func_args.get("content")
+      elif func_name == "save_to_topic_note":
+        output = save_to_topic_note(
+            func_args.get("topic"), 
+            func_args.get("filename"), 
+            func_args.get("content")
         )
-      elif func_name == "get_notes":
-        output = get_notes()
+      elif func_name == "get_topic_notes":
+        output = get_topic_notes(func_args.get("topic"))
       elif func_name == "save_to_calendar":
         output = save_to_calendar(
-            func_args.get("date"), func_args.get("content")
+            func_args.get("date"), 
+            func_args.get("content")
         )
       elif func_name == "get_calendar":
         output = get_calendar()
@@ -259,6 +298,6 @@ def chat_with_agent(prompt):
 
 
 if __name__ == "__main__":
-    while True:
-        user_input = input("請輸入你的任務: ")
-        chat_with_agent(user_input)
+  while True:
+    user_input = input("請輸入你的任務: ")
+    chat_with_agent(user_input)
