@@ -1,0 +1,8 @@
+[
+  {
+    "ai-api": {
+      "apiurl": "http://localhost:11434/api/chat",
+      "MODEL_NAME": "qwen2.5:7b"
+    }
+  }
+]

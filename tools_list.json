@@ -1,0 +1,106 @@
+"tools": {
+    {
+        "type": "function",
+        "function": {
+            "name": "save_to_calendar",
+            "description": (
+                "當用戶要求在日曆上記低行程、約會或特定日期的事件時使用。""模型必須從對話中提取日期（YYYY-MM-DD 格式）與事件內容（content），""並以 JSON 格式儲存。"
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "事件發生的日期，格式嚴格為 YYYY-MM-DD（例如：2026-08-25）",
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "該日期的行程或事件詳細內容",
+                    },
+                },
+                "required": [
+                    "date",
+                    "content"
+                ],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_calendar",
+            "description": "當用戶詢問日曆安排、查看某日行程或所有日程時使用此工具。",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "run_bash",
+            "description": "執行本地 Linux Shell 指令並返回輸出",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "要執行的 bash 指令"
+                    }
+                },
+                "required": [
+                    "command"
+                ],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "save_to_topic_note",
+            "description": "當用戶要求在特定主題子目錄下記低、儲存或更新筆記時使用。模型必須從對話中提取分類主題（topic）、檔案名稱（filename）與詳細內容（content），並以 JSON 結構進行合併儲存。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "筆記所屬的分類主題或子目錄名稱（例如：linux、python）"
+                    },
+                    "filename": {
+                        "type": "string",
+                        "description": "用作檔案名稱的簡短摘要"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "需要記錄或合併的詳細內容"
+                    }
+                },
+                "required": [
+                    "topic",
+                    "filename",
+                    "content"
+                ],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_topic_notes",
+            "description": "當用戶要求查看、檢索或讀取某個特定主題子目錄下的筆記時使用。模型必須從對話中提取分類主題（topic）。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "要檢索的筆記分類主題或子目錄名稱（例如：linux、python）"
+                    }
+                },
+                "required": [
+                    "topic"
+                ],
+            },
+        },
+    },
+},
