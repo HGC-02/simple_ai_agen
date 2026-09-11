@@ -11,7 +11,8 @@
     "settings":{
       "port_web": "5000",
       "port_listen": "10000",
-      "port_for_tell": "20000"
+      "port_for_tell": "20000",
+      "ip": "0.0.0.0"
     }
   }
 ]

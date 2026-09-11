@@ -9,19 +9,19 @@ with open('setting.json','r') as file:
 #---
 class chat:
     def url_api():
-        apiurl = setting[0]["ai-api"]["apiurl"]
+        apiurl = setting[0]["settings"]["apiurl"]
         return apiurl
     def model_name():
-        model_name = setting[0]["ai-api"]["MODEL_NAME"]
+        model_name = setting[0]["settings"]["MODEL_NAME"]
         return model_name
 
 class web:
-    def port(port_typre):
-        port = setting[1][port_typre]
+    def port(port_type):
+        port = setting[1]["settings"][port_type]
         return port
     def ip():
-        ip=setting[2]["ip"]
-
+        ipaddr = setting[1]["settings"]["ip"]
+        return ipaddr
 
 
 

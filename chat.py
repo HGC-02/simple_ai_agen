@@ -2,7 +2,7 @@ import json
 import subprocess
 import requests
 import os
-import settings_function as settings
+import setting_funtion as settings
 
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
