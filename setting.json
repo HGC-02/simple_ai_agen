@@ -1,8 +1,17 @@
 [
   {
-    "ai-api": {
+    "id": "1",
+    "settings": {
       "apiurl": "http://localhost:11434/api/chat",
       "MODEL_NAME": "qwen2.5:7b"
+    }
+  },
+  {
+    "id":"2",
+    "settings":{
+      "port_web": "5000",
+      "port_listen": "10000",
+      "port_for_tell": "20000"
     }
   }
 ]
