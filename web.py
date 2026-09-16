@@ -3,11 +3,12 @@ import socketserver
 import setting_funtion as setting
 
 
-def start_web():
-    Handler = http.server.SimpleHTTPRequestHandler
+def start_web():    
     PORT = setting.web.port("port_web")
+    IP = setting.web.ip()
+    Handler = http.server.SimpleHTTPRequestHandler
     #setting up website
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    with socketserver.TCPServer((IP, int(PORT)), Handler) as httpd:
         try:
             httpd.serve_forever()
             print(PORT)
@@ -24,7 +25,3 @@ def respone(item):
 
 
 
-
-
-
-start_web()

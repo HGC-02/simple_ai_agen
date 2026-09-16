@@ -18,10 +18,10 @@ class chat:
 class web:
     def port(port_type):
         port = setting[1]["settings"][port_type]
-        return port
+        return int(port)
     def ip():
         ipaddr = setting[1]["settings"]["ip"]
-        return ipaddr
+        return int(ipaddr)
 
 
 
