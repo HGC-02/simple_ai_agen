@@ -1,3 +1,4 @@
+name=$(python3 -c "import json; print(json.load(open('../setting.json'))[1][settings])")
 
-
-python -m http.server 8080
+echo "$name"
+#python -m http.server "$PORT"
