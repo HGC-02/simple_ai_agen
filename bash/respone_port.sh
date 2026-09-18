@@ -1,4 +1,5 @@
-name=$(python3 -c "import json; print(json.load(open('../setting.json'))[1][settings])")
+output=$(python3 -c "import sys; sys.path.append('..');import setting_funtion as i; print(i.web.port("port_listen"))")
 
-echo "$name"
+echo "Captured: $output"
+
 #python -m http.server "$PORT"
