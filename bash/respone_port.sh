@@ -1,5 +1,5 @@
-output=$(python3 -c "import sys; sys.path.append('..');import setting_funtion as i; print(i.web.port("port_listen"))")
-
-echo "Captured: $output"
-
-#python -m http.server "$PORT"
+cd ..
+PORT=$(jq -r '.[] | select(.id == "2") | .settings.port_for_tell' file.json)
+cd bash
+PORT=(20000)
+python -m http.server "$PORT"
