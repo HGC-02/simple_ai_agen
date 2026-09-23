@@ -23,7 +23,7 @@ class web:
     def ip():
         ipaddr = setting[1]["settings"]["ip"]
         print(ipaddr)
-        return int(ipaddr)
+        return ipaddr
 
 
 

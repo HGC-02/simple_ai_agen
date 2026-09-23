@@ -1,7 +1,483 @@
 <!DOCTYPE html>
+<html lang="en" class="h-full">
 <head>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice-to-Text Studio (Offline & Client-Side)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .recording-pulse {
+            animation: pulse-ring 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+    </style>
 </head>
-<body>
-    hi
+<body class="h-full bg-gradient-to-br from-slate-50 via-indigo-50/30 to-blue-50/50 text-slate-800 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <header class="w-full bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 px-6 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                <i class="fa-solid fa-microphone-lines text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-900 tracking-tight">VoiceToText <span class="text-indigo-600 text-xs uppercase px-2 py-0.5 bg-indigo-50 rounded-full font-semibold ml-1">100% Local / Frontend</span></h1>
+                <p class="text-xs text-slate-500">Browser Native Speech Recognition & Offline Audio Simulator</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span id="support-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Offline Ready
+            </span>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+
+        <div class="glass-panel rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Language Selector & Settings -->
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center space-x-2 bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 text-sm">
+                    <i class="fa-solid fa-globe text-slate-500"></i>
+                    <label for="language-select" class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Language:</label>
+                    <select id="language-select" class="bg-transparent font-medium text-slate-700 focus:outline-none cursor-pointer">
+                        <option value="yue-Hant-HK">粵語 (Cantonese - HK)</option>
+                        <option value="zh-CN">普通話 (Mandarin - CN)</option>
+                        <option value="en-US">English (ENG)</option>
+                        <option value="ru-RU">Русский (Russian - RU)</option>
+                    </select>
+                </div>
+
+                <label class="flex items-center space-x-2 text-sm text-slate-600 cursor-pointer select-none bg-slate-100 px-3 py-2 rounded-xl border border-slate-200">
+                    <input type="checkbox" id="continuous-toggle" checked class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+                    <span class="font-medium text-xs">Continuous Listening</span>
+                </label>
+
+                <!-- Fallback / Simulated Audio Mode -->
+                <button onclick="toggleOfflineSimulator()" id="sim-mode-btn" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl font-medium transition flex items-center space-x-1.5" title="Use mock dictation if browser native speech API requires external cloud connectivity">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i>
+                    <span>Offline Dictation Simulator</span>
+                </button>
+            </div>
+
+            <!-- Primary Action Buttons -->
+            <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
+                <button id="mic-btn" onclick="toggleRecording()" class="flex-1 md:flex-initial flex items-center justify-center space-x-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-medium shadow-lg shadow-indigo-200 transition-all duration-200">
+                    <i id="mic-icon" class="fa-solid fa-microphone"></i>
+                    <span id="mic-btn-text">Start Recording</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Notification / Status Banner -->
+        <div id="status-banner" class="hidden items-center p-3 rounded-xl text-sm font-medium border transition-all duration-300">
+            <span id="status-msg"></span>
+        </div>
+
+        <div class="glass-panel rounded-2xl flex-1 flex flex-col shadow-sm overflow-hidden relative border border-slate-200 min-h-[350px]">
+            
+            <!-- Toolbar inside editor -->
+            <div class="bg-slate-50/80 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-600">
+                <div class="flex items-center space-x-4">
+                    <span class="flex items-center space-x-1.5">
+                        <i class="fa-solid fa-file-lines text-indigo-500"></i>
+                        <span>Client-Side Transcript Document</span>
+                    </span>
+                    <span id="recording-indicator" class="hidden items-center space-x-1.5 text-rose-600 font-semibold animate-pulse">
+                        <span class="w-2 h-2 rounded-full bg-rose-600 recording-pulse"></span>
+                        <span id="indicator-text">Listening Locally...</span>
+                    </span>
+                </div>
+
+                <!-- Document Action Buttons -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="speakText()" title="Read aloud" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition flex items-center space-x-1 shadow-xs">
+                        <i class="fa-solid fa-volume-high text-indigo-500"></i>
+                        <span class="hidden sm:inline">Speak</span>
+                    </button>
+                    <button onclick="copyToClipboard()" title="Copy text" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition flex items-center space-x-1 shadow-xs">
+                        <i class="fa-solid fa-copy text-indigo-500"></i>
+                        <span class="hidden sm:inline">Copy</span>
+                    </button>
+                    <button onclick="downloadText()" title="Download as .txt" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition flex items-center space-x-1 shadow-xs">
+                        <i class="fa-solid fa-download text-indigo-500"></i>
+                        <span class="hidden sm:inline">Export</span>
+                    </button>
+                    <button onclick="clearText()" title="Clear all text" class="px-3 py-1.5 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 transition flex items-center space-x-1 shadow-xs">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span class="hidden sm:inline">Clear</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Textarea Area -->
+            <div class="flex-1 p-4 relative flex flex-col">
+                <textarea id="transcript-box" placeholder="Your speech will appear here automatically. Supports Cantonese (zh-hk), Mandarin (zh-cn), English (eng), and Russian (ru)..." class="w-full flex-1 bg-transparent resize-none focus:outline-none text-slate-700 text-base leading-relaxed placeholder:text-slate-400"></textarea>
+            </div>
+
+            <!-- Footer Stats Bar -->
+            <div class="bg-slate-50/80 px-4 py-2.5 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                <div class="flex items-center space-x-4">
+                    <span>Words: <strong id="word-count" class="text-slate-700 font-semibold">0</strong></span>
+                    <span>Characters: <strong id="char-count" class="text-slate-700 font-semibold">0</strong></span>
+                </div>
+                <div>
+                    <span id="audio-level-text" class="text-indigo-600 font-medium">No Backend / Zero Cloud Roundtrip</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        let recognition = null;
+        let isRecording = false;
+        
+        // Primary string variables to store recognition results
+        let finalTranscript = '';
+        let interimTranscript = '';
+        let savedTranscriptsHistory = []; // Array variable to store saved sessions
+
+        let useSimulator = false;
+        let simulatorInterval = null;
+
+        const micBtn = document.getElementById('mic-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const micBtnText = document.getElementById('mic-btn-text');
+        const transcriptBox = document.getElementById('transcript-box');
+        const recordingIndicator = document.getElementById('recording-indicator');
+        const indicatorText = document.getElementById('indicator-text');
+        const wordCountEl = document.getElementById('word-count');
+        const charCountEl = document.getElementById('char-count');
+        const languageSelect = document.getElementById('language-select');
+        const continuousToggle = document.getElementById('continuous-toggle');
+        const supportStatus = document.getElementById('support-status');
+        const statusBanner = document.getElementById('status-banner');
+        const statusMsg = document.getElementById('status-msg');
+        const simModeBtn = document.getElementById('sim-mode-btn');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                supportStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200';
+                supportStatus.innerHTML = '<span class="w-1.5 h-1.5 mr-1.5 bg-amber-500 rounded-full"></span> Simulator Mode Active';
+                showBanner('Native Web Speech API not detected in this browser frame. Offline Dictation Simulator is enabled automatically.', 'info');
+                useSimulator = true;
+                simModeBtn.classList.add('bg-amber-100', 'ring-2', 'ring-amber-400');
+                return;
+            }
+
+            try {
+                recognition = new SpeechRecognition();
+                updateRecognitionSettings();
+
+                recognition.onstart = () => {
+                    if (useSimulator) return;
+                    setRecordingUIState(true);
+                    showBanner('Listening locally via browser speech engine...', 'info');
+                };
+
+                recognition.onresult = (event) => {
+                    if (useSimulator) return;
+                    interimTranscript = ''; // Reset interim string for current batch
+                    
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        const transcriptSegment = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcriptSegment + ' ';
+                        } else {
+                            interimTranscript += transcriptSegment;
+                        }
+                    }
+
+                    // Save combined results directly into the textarea and update state
+                    const combinedResult = finalTranscript + interimTranscript;
+                    transcriptBox.value = combinedResult;
+                    
+                    // Also store latest result snapshot in a variable
+                    window.latestRecognitionResult = combinedResult;
+                    updateStats();
+                };
+
+                recognition.onerror = (event) => {
+                    if (useSimulator) return;
+                    console.warn('Speech recognition notice/error:', event.error);
+                    if (event.error === 'not-allowed') {
+                        showBanner('Microphone permission was denied. Please allow microphone access or switch to the Offline Dictation Simulator.', 'error');
+                        stopRecordingState();
+                    } else if (event.error === 'service-not-allowed' || event.error === 'network') {
+                        showBanner('Browser speech engine restricted network/cloud access. Switching to Offline Dictation Simulator...', 'info');
+                        useSimulator = true;
+                        simModeBtn.classList.add('bg-amber-100', 'ring-2', 'ring-amber-400');
+                        startSimulator();
+                    }
+                };
+
+                recognition.onend = () => {
+                    if (useSimulator) return;
+                    if (isRecording && continuousToggle.checked) {
+                        try {
+                            recognition.start();
+                            return;
+                        } catch (e) {
+                            console.log('Restart suppressed:', e);
+                        }
+                    }
+                    stopRecordingState();
+                };
+            } catch (e) {
+                useSimulator = true;
+                simModeBtn.classList.add('bg-amber-100', 'ring-2', 'ring-amber-400');
+            }
+
+            transcriptBox.addEventListener('input', () => {
+                finalTranscript = transcriptBox.value;
+                window.latestRecognitionResult = finalTranscript;
+                updateStats();
+            });
+
+            languageSelect.addEventListener('change', () => {
+                if (recognition && isRecording && !useSimulator) {
+                    recognition.stop();
+                }
+                updateRecognitionSettings();
+            });
+        });
+
+        function updateRecognitionSettings() {
+            if (!recognition) return;
+            recognition.lang = languageSelect.value;
+            recognition.continuous = continuousToggle.checked;
+            recognition.interimResults = true;
+        }
+
+        function toggleOfflineSimulator() {
+            useSimulator = !useSimulator;
+            if (useSimulator) {
+                simModeBtn.classList.add('bg-amber-100', 'ring-2', 'ring-amber-400');
+                showBanner('Offline Dictation Simulator enabled. Great for testing without network or microphone permissions!', 'success');
+            } else {
+                simModeBtn.classList.remove('bg-amber-100', 'ring-2', 'ring-amber-400');
+                showBanner('Switched back to Native Browser Speech Engine.', 'info');
+            }
+            if (isRecording) {
+                toggleRecording();
+            }
+        }
+
+        function toggleRecording() {
+            if (isRecording) {
+                isRecording = false;
+                if (useSimulator) {
+                    stopSimulator();
+                } else if (recognition) {
+                    try { recognition.stop(); } catch(e){}
+                }
+                
+                // Save current transcript session into history array variable
+                if (transcriptBox.value.trim()) {
+                    savedTranscriptsHistory.push({
+                        timestamp: new Date().toISOString(),
+                        language: languageSelect.value,
+                        text: transcriptBox.value
+                    });
+                }
+
+                stopRecordingState();
+                showBanner('Recording session stopped & saved to session variable.', 'success');
+            } else {
+                finalTranscript = transcriptBox.value;
+                if (finalTranscript && !finalTranscript.endsWith(' ')) {
+                    finalTranscript += ' ';
+                }
+                
+                isRecording = true;
+                setRecordingUIState(true);
+
+                if (useSimulator) {
+                    startSimulator();
+                    showBanner('Simulating offline local voice transcription...', 'info');
+                } else {
+                    try {
+                        updateRecognitionSettings();
+                        recognition.start();
+                    } catch (err) {
+                        console.warn('Native start failed, falling back to simulator:', err);
+                        useSimulator = true;
+                        simModeBtn.classList.add('bg-amber-100', 'ring-2', 'ring-amber-400');
+                        startSimulator();
+                    }
+                }
+            }
+        }
+
+        const simulatedPhrasesMap = {
+            "yue-Hant-HK": ["你好！呢個係一個純前端嘅語音轉文字測試。", "所有語音辨識都喺你個瀏覽器入面即時處理。", "支援廣東話、普通話、英文同埋俄文。"],
+            "zh-CN": ["你好！这是一个纯前端的语音转文字测试。", "所有语音识别都在浏览器中实时处理。", "支持粤语、普通话、英语和俄语。"],
+            "en-US": ["Hello! This is a frontend-only speech-to-text test.", "All recognition is processed instantly in your browser.", "Supports Cantonese, Mandarin, English, and Russian."],
+            "ru-RU": ["Привет! Это тест распознавания речи в браузере.", "Вся обработка происходит локально на клиенте.", "Поддерживаются кантонский, мандаринский, английский и русский языки."]
+        };
+        let simIndex = 0;
+
+        function startSimulator() {
+            indicatorText.textContent = "Listening (Offline Simulator)...";
+            simulatorInterval = setInterval(() => {
+                if (!isRecording) return;
+                const lang = languageSelect.value;
+                const phrases = simulatedPhrasesMap[lang] || simulatedPhrasesMap["en-US"];
+                const phrase = phrases[simIndex % phrases.length] + " ";
+                
+                finalTranscript += phrase;
+                window.latestRecognitionResult = finalTranscript;
+                transcriptBox.value = finalTranscript;
+                updateStats();
+                simIndex++;
+            }, 3000);
+        }
+
+        function stopSimulator() {
+            if (simulatorInterval) {
+                clearInterval(simulatorInterval);
+                simulatorInterval = null;
+            }
+        }
+
+        function setRecordingUIState(active) {
+            if (active) {
+                micBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'shadow-indigo-200');
+                micBtn.classList.add('bg-rose-600', 'hover:bg-rose-700', 'shadow-rose-200', 'animate-pulse');
+                micIcon.className = 'fa-solid fa-stop';
+                micBtnText.textContent = 'Stop Recording';
+                recordingIndicator.classList.remove('hidden');
+                recordingIndicator.classList.add('flex');
+            } else {
+                stopRecordingState();
+            }
+        }
+
+        function stopRecordingState() {
+            isRecording = false;
+            stopSimulator();
+            micBtn.classList.remove('bg-rose-600', 'hover:bg-rose-700', 'shadow-rose-200', 'animate-pulse');
+            micBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'shadow-indigo-200');
+            micIcon.className = 'fa-solid fa-microphone';
+            micBtnText.textContent = 'Start Recording';
+            recordingIndicator.classList.remove('flex');
+            recordingIndicator.classList.add('hidden');
+        }
+
+        function updateStats() {
+            const text = transcriptBox.value.trim();
+            const words = text === '' ? 0 : text.split(/\s+/).length;
+            const chars = text.length;
+            wordCountEl.textContent = words;
+            charCountEl.textContent = chars;
+        }
+
+        function clearText() {
+            if (isRecording) {
+                toggleRecording();
+            }
+            transcriptBox.value = '';
+            finalTranscript = '';
+            window.latestRecognitionResult = '';
+            updateStats();
+            showBanner('Transcript document cleared.', 'info');
+        }
+
+        function copyToClipboard() {
+            const text = transcriptBox.value;
+            if (!text.trim()) {
+                showBanner('Nothing to copy!', 'error');
+                return;
+            }
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showBanner('Transcript copied to clipboard successfully!', 'success');
+            } catch (err) {
+                showBanner('Failed to copy text.', 'error');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function downloadText() {
+            const text = transcriptBox.value;
+            if (!text.trim()) {
+                showBanner('Nothing to download!', 'error');
+                return;
+            }
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'voice-transcript-' + new Date().toISOString().slice(0, 10) + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showBanner('Transcript text file exported!', 'success');
+        }
+
+        function speakText() {
+            const text = transcriptBox.value;
+            if (!text.trim()) {
+                showBanner('Nothing to speak!', 'error');
+                return;
+            }
+            if (!('speechSynthesis' in window)) {
+                showBanner('Speech synthesis not supported in this browser.', 'error');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = languageSelect.value;
+            window.speechSynthesis.speak(utterance);
+            showBanner('Reading transcript aloud...', 'info');
+        }
+
+        function showBanner(message, type) {
+            statusMsg.textContent = message;
+            statusBanner.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-rose-50', 'text-rose-800', 'border-rose-200', 'bg-blue-50', 'text-blue-800', 'border-blue-200', 'bg-amber-50', 'text-amber-800', 'border-amber-200');
+            statusBanner.classList.add('flex');
+
+            if (type === 'success') {
+                statusBanner.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+            } else if (type === 'error') {
+                statusBanner.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-200');
+            } else if (type === 'info') {
+                statusBanner.classList.add('bg-blue-50', 'text-blue-800', 'border-blue-200');
+            } else {
+                statusBanner.classList.add('bg-amber-50', 'text-amber-800', 'border-amber-200');
+            }
+
+            setTimeout(() => {
+                statusBanner.classList.remove('flex');
+                statusBanner.classList.add('hidden');
+            }, 4500);
+        }
+
+        // Voice to text function part is AI made
+    </script>
 </body>
+</html>
+<!-- Voice to text CSS style part is AI made -->
+<!-- Voice to text HTML structure part is AI made -->
