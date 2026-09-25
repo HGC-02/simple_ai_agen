@@ -353,6 +353,7 @@
             if (simulatorInterval) {
                 clearInterval(simulatorInterval);
                 simulatorInterval = null;
+                //add return text to ai
             }
         }
 
@@ -438,6 +439,7 @@
         }
 
         function speakText() {
+            // remove and start when revice ai respone 
             const text = transcriptBox.value;
             if (!text.trim()) {
                 showBanner('Nothing to speak!', 'error');
