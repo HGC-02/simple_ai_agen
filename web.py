@@ -58,7 +58,8 @@ class CustomHandler(BaseHTTPRequestHandler):
             "path": parsed_url.path,
             "received_data": data
         }
-
+        with open("respon_data.json", "w", encoding="utf-8") as f:
+                json.dump(response_data, f)
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
