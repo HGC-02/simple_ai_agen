@@ -354,6 +354,11 @@
                 clearInterval(simulatorInterval);
                 simulatorInterval = null;
                 //add return text to ai
+                fetch('http://0.0.0.0:8080', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: finalTranscript, time: Date.now() })
+            });
             }
         }
 
