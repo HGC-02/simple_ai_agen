@@ -35,7 +35,12 @@ def UDF(chat_history):
     response = requests.post(OLLAMA_URL, json=payload).json()
     message = response.get("message", {})
 
-    x=message[]
+    if message.get("tool_calls"):
+        messages.append(message)
+    
+        for tool_call in message["tool_calls"]:
+          func_name = tool_call["function"]["name"]
+          func_args = tool_call["function"]["arguments"]
     messages.append(
               {
                   "role": "tool",
