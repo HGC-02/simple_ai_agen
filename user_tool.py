@@ -6,6 +6,9 @@ import requests
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
 UD = "UD.json"
+# add another tool list tool:[modifly_file]
+
+
 
 def UDF(chat_history):
     with open(UD,"r") as file:
@@ -23,6 +26,7 @@ def UDF(chat_history):
                   "content": f"file{UD}:\n{UD_contex} \n file{chat_history}:\n{ch_contex}",
               }
           )
+    
     payload = {
               "model": MODEL_NAME,
               "messages": messages,
@@ -30,3 +34,11 @@ def UDF(chat_history):
           }
     response = requests.post(OLLAMA_URL, json=payload).json()
     message = response.get("message", {})
+
+    x=message[]
+    messages.append(
+              {
+                  "role": "tool",
+                  "content": str(output),
+              }
+          )
