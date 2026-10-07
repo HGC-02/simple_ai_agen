@@ -2,7 +2,7 @@ import json
 import subprocess
 import requests
 import os
-import settings_function as settings
+import setting_funtion as settings
 
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
@@ -138,6 +138,8 @@ def get_calendar():
   return json.dumps(all_events, ensure_ascii=False, indent=2)
 
 
+
+
 # 2. 與 Ollama 互動的主迴圈
 def chat_with_agent(prompt):
   messages = [{"role": "user", "content": prompt}]
@@ -201,3 +203,4 @@ def chat_with_agent(prompt):
 
   else:
     return(f"\n[Agent 回答]: {message.get('content')}")
+

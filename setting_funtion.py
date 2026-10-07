@@ -3,15 +3,32 @@ import json
 #env var
 
 #---
-
+#glb_code
+with open('setting.json','r') as file:
+            setting = json.load(file)
+#---
 class chat:
     def url_api():
-        with open('setting.json', 'r') as file:
-            settings = json.load(file)
-        apiurl = settings[0]["ai-api"]["apiurl"]
+        apiurl = setting[0]["settings"]["apiurl"]
         return apiurl
     def model_name():
-        with open('setting.json', 'r') as file:
-            settings = json.load(file)
-        model_name = settings[0]["ai-api"]["MODEL_NAME"]
+        model_name = setting[0]["settings"]["MODEL_NAME"]
         return model_name
+
+class web:
+    def port(port_type):
+        port = setting[1]["settings"][port_type]
+        print (int(port))
+        return int(port)
+    def ip():
+        ipaddr = setting[1]["settings"]["ip"]
+        print(ipaddr)
+        return ipaddr
+
+
+
+class change_setting:
+    def reset_to_default():
+        pass
+          
+        
