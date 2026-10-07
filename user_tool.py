@@ -86,3 +86,7 @@ def file(file_name,contex):
         f.write(contex)
     else:
        print("ok remain unchange")
+
+
+
+# add a chat summaries
