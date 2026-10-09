@@ -90,3 +90,47 @@ def file(file_name,contex):
 
 
 # add a chat summaries
+
+def Chat_sum(chat_history):
+    with open(UD,"r") as file:
+       UD_contex = json.load(file)
+    with open(chat_history,"r") as file:
+       ch_contex = json.load(file)
+
+    prompt = (f"base on the the chat history:{chat_history} make a summaries \n")
+    messages = [{"role": "user", "content": prompt}]
+    
+    
+    messages.append(
+              {
+                  "role": "user",
+                  "content": f"file{chat_history}:\n{ch_contex}",
+              }
+          )
+    
+    payload = {
+              "model": MODEL_NAME,
+              "messages": messages,
+              "tools": tool,
+              "stream": False,
+          }
+    response = requests.post(OLLAMA_URL, json=payload).json()
+    message = response.get("message", {})
+
+    if message.get("tool_calls"):
+        messages.append(message)
+    
+        for tool_call in message["tool_calls"]:
+          func_name = tool_call["function"]["name"]
+          func_args = tool_call["function"]["arguments"]
+
+          output=file(
+             func_args.get("file_name"),
+             func_args.get("contex")
+          )
+    messages.append(
+              {
+                  "role": "tool",
+                  "content": str(output),
+              }
+          )
