@@ -13,8 +13,11 @@ with open("func_list.json","r") as f:
 def list():
     print("id   func")
     for i in id:
-        print(f"{id}.: {choses}\n")
+        print(f"{id[i]}.:  {choses[i]}\n")
 def help():
-    pass#command help
+    for i in id:
+        print(choses[i],",","command:",command[i])
 
-
+def main():
+    uip=input()
+    if uip ==
