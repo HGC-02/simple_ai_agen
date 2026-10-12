@@ -97,7 +97,7 @@ def Chat_sum(chat_history):
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"base on the the chat history:{chat_history} make a summaries \n")
+    prompt = (f"base on the the chat history:{chat_history} make a summaries and use 10 word to explan the chat \n")
     messages = [{"role": "user", "content": prompt}]
     
     

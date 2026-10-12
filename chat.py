@@ -9,8 +9,10 @@ MODEL_NAME = settings.chat.model_name()
 
 with open('tools_list.json', 'r') as file:
     tools = json.load(file)
-
-
+def get_history_name():
+  pass
+def get_chat_history():
+  pass
 
 # function of tools
 def save_to_topic_note(topic, filename, content):
