@@ -10,7 +10,7 @@ with open("func_list.json","r") as f:
         id.append(i["id"])
         
 
-def list():
+def command():
     print("id   func")
     for i in id:
         print(f"{id[i]}.:  {choses[i]}\n")
@@ -19,5 +19,15 @@ def help():
         print(choses[i],",","command:",command[i])
 
 def main():
-    uip=input()
-    if uip ==
+    l=0
+    while True:
+        if l==0:
+            command()
+            l=1 
+        uip=input()
+        if uip == "command":
+            command()
+        elif uip == "help":
+            help()
+        else:
+            print(f"command: {uip} nofind")
