@@ -7,6 +7,9 @@ a ai agen base on [ollama]("https://github.com/ollama/ollama")
 - home_page
 > 1. command list
 > 2. call user func
+- loc & cloud ai working
+> 1. call cloud ai (init part done)
+> 2. rm prive data
 ## done
 
 - calendar (v1)
