@@ -2,8 +2,8 @@ import json
 import sys
 import os
 
-command_array=["user_tool",]
-command_dis=["enter user tool"]
+command_array=["user tool","loc ai"]
+command_dis=["enter user tool","enter loc ai chat room"]
 choses=[]
 command=[]
 id=[]
@@ -36,6 +36,11 @@ def main():
         elif uip  == "user tool":
             program = sys.executable
             arguments = [sys.executable, "user_tool_main.py"]
+            os.execv(program, arguments)
+            ptint("well seem like you find a erro if you would like to pls post it to issui in github thx")
+        elif uip == "loc ai":
+            program = sys.executable
+            arguments = [sys.executable, "main.py"]
             os.execv(program, arguments)
             ptint("well seem like you find a erro if you would like to pls post it to issui in github thx")
         else:
