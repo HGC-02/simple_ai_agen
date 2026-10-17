@@ -1,3 +1,3 @@
-import web
+import home_page
 
-web.start_web()
+home_page.main()

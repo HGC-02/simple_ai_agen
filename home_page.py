@@ -19,8 +19,8 @@ def home():
     print("wellcome to home page,enter help to see command")
     
 def help():
-    for i in len(command_array):
-        print (command_array[i],command_dis[i])
+    for i in range(0,len(command_array)):
+        print (f"{command_array[i]}:{command_dis[i]}")
 
 def main():
     l=0
@@ -28,7 +28,7 @@ def main():
         if l==0:
             home()
             l=1 
-        uip=input()
+        uip=input("user:")
         if uip == "home":
             home()
         elif uip == "help":
