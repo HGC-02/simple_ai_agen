@@ -1,11 +1,13 @@
 import chat
 import subprocess
 import json
-import home_page
+import sys
+import os
 dircall = True
 ai_json_file = "chat_history.json"
 user_json_file = "user_input_history.json"
-if __name__ == "__main__":
+print ("hi")
+if True:
   while True:
     if dircall:
       user_input = input("請輸入你的任務: ")
@@ -13,7 +15,9 @@ if __name__ == "__main__":
         subprocess.Popen(["python", "main-web.py"])
         continue
       elif user_input == "/home_page":
-        home_page.main()
+        program = sys.executable
+        arguments = [sys.executable, "main.py"]
+        os.execv(program, arguments)
         continue
     else:
       with open(user_json_file, 'r') as file:

@@ -45,3 +45,5 @@ def main():
             ptint("well seem like you find a erro if you would like to pls post it to issui in github thx")
         else:
             print(f"command: {uip} nofind")
+
+main()
