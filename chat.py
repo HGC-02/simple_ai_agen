@@ -84,9 +84,7 @@ def get_topic_notes(topic):
           all_topic_notes.append(json.load(f))
       except Exception:
         continue
-
   return json.dumps(all_topic_notes, ensure_ascii=False, indent=2)
-
 def run_bash(command):
   try:
     result = subprocess.run(

@@ -1,29 +1,29 @@
-"tools": {
+[
     {
         "type": "function",
         "function": {
             "name": "save_to_calendar",
-            "description": (
-                "當用戶要求在日曆上記低行程、約會或特定日期的事件時使用。""模型必須從對話中提取日期（YYYY-MM-DD 格式）與事件內容（content），""並以 JSON 格式儲存。"
-            ),
+            "description": 
+                "當用戶要求在日曆上記低行程、約會或特定日期的事件時使用。模型必須從對話中提取日期（YYYY-MM-DD 格式）與事件內容（content），並以 JSON 格式儲存。"
+            ,
             "parameters": {
                 "type": "object",
                 "properties": {
                     "date": {
                         "type": "string",
-                        "description": "事件發生的日期，格式嚴格為 YYYY-MM-DD（例如：2026-08-25）",
+                        "description": "事件發生的日期，格式嚴格為 YYYY-MM-DD（例如：2026-08-25）"
                     },
                     "content": {
                         "type": "string",
-                        "description": "該日期的行程或事件詳細內容",
-                    },
+                        "description": "該日期的行程或事件詳細內容"
+                    }
                 },
                 "required": [
                     "date",
                     "content"
-                ],
-            },
-        },
+                ]
+            }
+        }
     },
     {
         "type": "function",
@@ -32,9 +32,9 @@
             "description": "當用戶詢問日曆安排、查看某日行程或所有日程時使用此工具。",
             "parameters": {
                 "type": "object",
-                "properties": {},
-            },
-        },
+                "properties": {}
+            }
+        }
     },
     {
         "type": "function",
@@ -51,9 +51,9 @@
                 },
                 "required": [
                     "command"
-                ],
-            },
-        },
+                ]
+            }
+        }
     },
     {
         "type": "function",
@@ -80,9 +80,9 @@
                     "topic",
                     "filename",
                     "content"
-                ],
-            },
-        },
+                ]
+            }
+        }
     },
     {
         "type": "function",
@@ -99,8 +99,8 @@
                 },
                 "required": [
                     "topic"
-                ],
-            },
-        },
-    },
-},
+                ]
+            }
+        }
+    }
+]
