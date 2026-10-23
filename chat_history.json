@@ -1,0 +1,14 @@
+[
+    {
+        "type": "ai respon",
+        "user": "who are you",
+        "inform": "\n[Agent \u56de\u7b54]: I'm an artificial intelligence model known as Llama. Llama stands for \"Large Language Model Meta AI\"."
+    },
+    [
+        {
+            "type": "ai respon",
+            "user": "hi",
+            "inform": "\n[Agent \u56de\u7b54]: How can I assist you today?"
+        }
+    ]
+]
