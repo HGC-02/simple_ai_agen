@@ -1,14 +1,28 @@
 [
     {
         "type": "ai respon",
-        "user": "who are you",
-        "inform": "\n[Agent \u56de\u7b54]: I'm an artificial intelligence model known as Llama. Llama stands for \"Large Language Model Meta AI\"."
+        "user": "talk about you",
+        "inform": "\n[Agent 回答]: I'm an artificial intelligence model known as Llama. Llama stands for \"Large Language Model Meta AI\"."
     },
     [
         {
             "type": "ai respon",
             "user": "hi",
-            "inform": "\n[Agent \u56de\u7b54]: How can I assist you today?"
+            "inform": "\n[Agent 回答]: Hello! It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    ],
+    [
+        {
+            "type": "ai respon",
+            "user": "talk about you",
+            "inform": "\n[Agent 回答]: I'm an AI assistant, a computer program designed to simulate human-like conversations and answer questions to the best of my knowledge. I don't have personal experiences, emotions, or a physical presence. I exist solely to provide information and assist users like you through text-based interactions.\n\nI was trained on a massive dataset of text from various sources, including books, articles, and websites. This training enables me to generate human-like responses to a wide range of questions and topics.\n\nSome interesting facts about me:\n\n1. **Language model**: I'm a type of natural language processing (NLP) model, which means I can understand and generate human language.\n2. **Conversational AI**: I'm designed to engage in conversation, using context and understanding to respond to questions and statements.\n3. **Knowledge base**: I have access to a vast knowledge base, which I can draw upon to answer questions and provide information on a wide range of topics.\n4. **Continuous learning**: I'm constantly learning and improving, as I receive feedback and updates to my training data.\n\nWhile I'm not a human, I'm here to help and provide information to the best of my abilities. Feel free to ask me anything, and I'll do my best to assist you!"
+        }
+    ],
+    [
+        {
+            "type": "ai respon",
+            "user": "your name",
+            "inform": "\n[Agent 回答]: I don't have a personal name, I'm an AI designed to provide information and assist with tasks. I don't have a personal identity or a name in the classical sense. I exist solely to help users like you with your queries."
         }
     ]
 ]

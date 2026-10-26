@@ -16,11 +16,31 @@
         >output : Hello! How can I assist you today? 
     2.  
     - erro
-        only can hold one history
+        only can hold one history(fixed)
 2. ai tool call 
     - fail
 3. user funtion call
     - fail
+
+# test result 2
+- test env: win 10
+
+1. ai api
+    >in:hi
+    >out:Hello! How can I assist you today?
+    erro fill to save history
+2. ai tool call 
+
+3. user funtion call
+
+# test result 2
+- test env:win10
+
+1. ai api
+
+2. ai tool call 
+
+3. user funtion call
 
 # test result 2
 - test env:

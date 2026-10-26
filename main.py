@@ -9,7 +9,8 @@ if __name__ == "__main__":
   while True:
     if dircall:
       user_input = input("請輸入你的任務: ")
-      print(chat.chat_with_agent(user_input))
+      ans=chat.chat_with_agent(user_input)
+      print(ans)
       
       if user_input == "/start web":
         subprocess.Popen(["python", "main-web.py"])
@@ -27,17 +28,26 @@ if __name__ == "__main__":
     my_variable = {
         "type": "ai respon",
         "user": user_input,
-        "inform": chat.chat_with_agent(user_input)
+        "inform": ans
     },
 
     
 
-    with open(ai_json_file, "r+", encoding="utf-8") as f:
-        data = json.load(f)
-        data.append(my_variable)
-        json.dump(data, f,indent=4)
+    try:
+      with open(ai_json_file, "r", encoding="utf-8") as file:
+          data = json.load(file)
+    except FileNotFoundError:
+    # If the file doesn't exist yet, start with an empty list
+      data = []
+
+# 3. Append the new item to your list
+    data.append(my_variable)
+
+# 4. Overwrite the file with the updated data
+    with open(ai_json_file, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
     with open(ai_json_file,"r") as f:
-        data=json.load(f)
+      data=json.load(f)
 
 
         
