@@ -199,8 +199,10 @@ def chat_with_agent(prompt):
         "stream": False,
     }
     final_response = requests.post(OLLAMA_URL, json=final_payload).json()
+    #print(final_payload)
     return(f"\n[Agent 回答]: {final_response.get('message', {}).get('content')}")
 
   else:
     return(f"\n[Agent 回答]: {message.get('content')}")
+  
 

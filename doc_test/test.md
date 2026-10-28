@@ -28,25 +28,11 @@
 1. ai api
     >in:hi
     >out:Hello! How can I assist you today?
-    erro fill to save history
-2. ai tool call 
+    erro fill to save history(done)
+2. ai tool call   
+    > test able to run  
+    > [ test json file ](history_test.json)
+    
+3. user funtion call 
+    > skipped
 
-3. user funtion call
-
-# test result 2
-- test env:win10
-
-1. ai api
-
-2. ai tool call 
-
-3. user funtion call
-
-# test result 2
-- test env:
-
-1. ai api
-
-2. ai tool call 
-
-3. user funtion call
