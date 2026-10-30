@@ -9,8 +9,10 @@ MODEL_NAME = settings.chat.model_name()
 
 with open('tools_list.json', 'r') as file:
     tools = json.load(file)
-
-
+def get_history_name():
+  pass
+def get_chat_history():
+  pass
 
 # function of tools
 def save_to_topic_note(topic, filename, content):
@@ -82,9 +84,7 @@ def get_topic_notes(topic):
           all_topic_notes.append(json.load(f))
       except Exception:
         continue
-
   return json.dumps(all_topic_notes, ensure_ascii=False, indent=2)
-
 def run_bash(command):
   try:
     result = subprocess.run(
@@ -199,8 +199,10 @@ def chat_with_agent(prompt):
         "stream": False,
     }
     final_response = requests.post(OLLAMA_URL, json=final_payload).json()
+    #print(final_payload)
     return(f"\n[Agent 回答]: {final_response.get('message', {}).get('content')}")
 
   else:
     return(f"\n[Agent 回答]: {message.get('content')}")
+  
 
