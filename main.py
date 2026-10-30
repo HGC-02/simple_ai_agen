@@ -1,6 +1,8 @@
 import chat
 import subprocess
 import json
+import os
+import sys
 
 dircall = True
 ai_json_file = "chat_history.json"
@@ -15,6 +17,11 @@ if __name__ == "__main__":
       if user_input == "/start web":
         subprocess.Popen(["python", "main-web.py"])
         continue
+      elif user_input == "/home":
+        program = sys.executable
+        arguments = [sys.executable, "home.py"]
+        os.execv(program, arguments)
+        ptint("well seem like you find a erro if you would like to pls post it to issui in github thx")
       
     else:
       with open(user_json_file, 'r') as file:
