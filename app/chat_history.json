@@ -115,5 +115,12 @@
             "user": "what is the notes:testing",
             "inform": "\n[Agent 回答]: The note for the \"testing\" topic is: \"This is a test note for the tools verification.\" This seems to be a placeholder or example text used for testing purposes. If you need more detailed information or have a specific question, feel free to ask!"
         }
+    ],
+    [
+        {
+            "type": "ai respon",
+            "user": "hi",
+            "inform": "\n[Agent 回答]: Hello! How can I help you today?"
+        }
     ]
 ]

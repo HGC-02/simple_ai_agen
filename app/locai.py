@@ -7,7 +7,7 @@ import sys
 dircall = True
 ai_json_file = "chat_history.json"
 user_json_file = "user_input_history.json"
-if __name__ == "__main__":
+if True:
   while True:
     if dircall:
       user_input = input("請輸入你的任務: ")
@@ -18,10 +18,7 @@ if __name__ == "__main__":
         subprocess.Popen(["python", "main-web.py"])
         continue
       elif user_input == "/home":
-        program = sys.executable
-        arguments = [sys.executable, "home.py"]
-        os.execv(program, arguments)
-        ptint("well seem like you find a erro if you would like to pls post it to issui in github thx")
+        break
       
     else:
       with open(user_json_file, 'r') as file:
@@ -33,7 +30,7 @@ if __name__ == "__main__":
     #---------input end--------------
 
     my_variable = {
-        "type": "ai respon",
+        "type": "ai response",
         "user": user_input,
         "inform": ans
     },

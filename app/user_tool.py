@@ -32,6 +32,18 @@ tool={
         },
     },
 }
+def main():
+    while True:
+        user_input=input()
+        if user_input == "udf":
+           UDF("chat_history.json")
+        elif user_input == "Chat_sum":
+           Chat_sum("chat_history.json")
+        elif user_input == "/home":
+           break
+        else:
+           print(f"command {user_input} no found")
+
 
 def UDF(chat_history):
     with open(UD,"r") as file:
