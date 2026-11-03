@@ -75,13 +75,13 @@ def UDF(chat_history):
         messages.append(message)
     
         for tool_call in message["tool_calls"]:
-          func_name = tool_call["function"]["name"]
+          #func_name = tool_call["function"]["name"]
           func_args = tool_call["function"]["arguments"]
 
-          output=file(
+          output=[
              func_args.get("file_name"),
              func_args.get("contex")
-          )
+            ]
     messages.append(
               {
                   "role": "tool",
@@ -90,12 +90,14 @@ def UDF(chat_history):
           )
 
 
-def file(file_name,contex):
+def file(file_name:str,contex):
     print(f"file name:{file_name} \n file conxet{contex} \n are you should i change Y/N? \n your anser:")
     x = input()
     if x == "Y" or x == "y":
-       with os.open(file_name, "w") as f:
-        f.write(contex)
+      fd = os.open(file_name, os.O_WRONLY | os.O_CREAT)
+      byte_data = contex.encode("utf-8")
+      bytes_written = os.write(fd, byte_data)
+
     else:
        print("ok remain unchange")
 
@@ -104,12 +106,10 @@ def file(file_name,contex):
 # add a chat summaries
 
 def Chat_sum(chat_history):
-    with open(UD,"r") as file:
-       UD_contex = json.load(file)
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"base on the the chat history:{chat_history} make a summaries and use 10 word to explan the chat \n")
+    prompt = (f"base on the the chat history:{chat_history} make a summaries and use about 10 to 250 word to explan the chat, mostly is mark the informations \n")
     messages = [{"role": "user", "content": prompt}]
     
     
@@ -136,10 +136,10 @@ def Chat_sum(chat_history):
           func_name = tool_call["function"]["name"]
           func_args = tool_call["function"]["arguments"]
 
-          output=file(
+          output=[
              func_args.get("file_name"),
              func_args.get("contex")
-          )
+          ]
     messages.append(
               {
                   "role": "tool",
