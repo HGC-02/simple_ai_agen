@@ -34,20 +34,24 @@ tool={
 }
 def main():
     while True:
-        user_input=input()
+        user_input=input("what tool you want to run:")
         if user_input == "udf":
            UDF("chat_history.json")
         elif user_input == "Chat_sum":
            Chat_sum("chat_history.json")
         elif user_input == "/home":
-           break
+           return True
         else:
            print(f"command {user_input} no found")
 
 
 def UDF(chat_history):
     with open(UD,"r") as file:
-       UD_contex = json.load(file)
+        try:
+          UD_contex = json.load(file)
+        except:
+          UD_contex="new user no data about him/her"
+          
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
@@ -68,8 +72,13 @@ def UDF(chat_history):
               "tools": tool,
               "stream": False,
           }
-    response = requests.post(OLLAMA_URL, json=payload).json()
-    message = response.get("message", {})
+    response = requests.post(OLLAMA_URL, json=payload).json
+    while True:
+        message = response.get("message", {})
+        print(message)
+        temp =+1
+        if message != {} or temp<=10:
+           break
 
     if message.get("tool_calls"):
         messages.append(message)
@@ -82,12 +91,12 @@ def UDF(chat_history):
              func_args.get("file_name"),
              func_args.get("contex")
             ]
-    messages.append(
-              {
-                  "role": "tool",
-                  "content": str(output),
-              }
-          )
+        messages.append(
+                {
+                    "role": "tool",
+                    "content": str(output),
+                }
+            )
 
 
 def file(file_name:str,contex):

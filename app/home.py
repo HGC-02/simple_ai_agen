@@ -27,9 +27,9 @@ def main():
         elif uip == "help ":
             help()
         elif uip  == "user tool":
-            user_tool
+            user_tool.main()
         elif uip == "loc ai":
-            locai
+            locai.main()
         else:
             print(f"command: {uip} nofind")
 

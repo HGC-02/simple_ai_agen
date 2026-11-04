@@ -122,5 +122,12 @@
             "user": "hi",
             "inform": "\n[Agent 回答]: Hello! How can I help you today?"
         }
+    ],
+    [
+        {
+            "type": "ai response",
+            "user": "hi",
+            "inform": "\n[Agent 回答]: Hello! 👋 How can I assist you today?"
+        }
     ]
 ]

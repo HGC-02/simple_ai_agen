@@ -4,6 +4,7 @@ import json
 
 #---
 #glb_code
+
 with open('setting.json','r') as file:
         setting = json.load(file)
 #---
