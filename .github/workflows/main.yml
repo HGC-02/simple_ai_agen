@@ -25,6 +25,10 @@ jobs:
         CB=${GITHUB_REF#refs/heads/}
         git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -qx README.md || exit 0
         # coifg end ;)
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.confirm }}" != "true" ]; then
+            echo "Manually cancelled by user (confirm is false)."
+            exit 0
+        fi
         for r in $(git branch -r|grep -v HEAD|sed 's|origin/||'); do
           [ "$r" = "$CB" ] && continue
           git switch "$r"
