@@ -14,7 +14,7 @@ on:
 
 
 jobs:
-  run:
+  sync:
     runs-on: ubuntu-latest
     permissions: {contents: write} 
     steps:
