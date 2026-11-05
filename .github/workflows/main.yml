@@ -21,7 +21,10 @@ jobs:
     - uses: actions/checkout@v4
       with: {fetch-depth: 0}
     - run: |
-        CB=${GITHUB_REF#refs/heads/} 
+        git config user.name nun_human_auto_helper && git config user.email eeeee@none.nullwhwer #i would like to name it that way ;>
+        CB=${GITHUB_REF#refs/heads/}
+        git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -qx README.md || exit 0
+        # coifg end ;)
         for r in $(git branch -r|grep -v HEAD|sed 's|origin/||'); do
           [ "$r" = "$CB" ] && continue
           git switch "$r"
@@ -29,6 +32,4 @@ jobs:
           git add readme.md
           git commit -m "feat: 從 source-branch 複製特定檔案"
           git push
-
-
         done
