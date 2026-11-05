@@ -1,6 +1,6 @@
 import locai
 import user_tool
-
+# add the pwd finder :< 
 command_array=["user tool","loc ai"]
 command_dis=["enter user tool","enter loc ai chat room"]
 choses=[]
