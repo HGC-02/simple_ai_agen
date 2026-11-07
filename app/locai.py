@@ -4,9 +4,15 @@ import json
 import os
 import sys
 
+current_dir = os.getcwd()
+
 dircall = True
 ai_json_file = "chat_history.json"
 user_json_file = "user_input_history.json"
+
+ai_json_path = os.path.join(current_dir, ai_json_file)
+user_json_path = os.path.join(current_dir, user_json_file)
+
 def main():
   if True:
     while True:

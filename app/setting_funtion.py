@@ -1,11 +1,13 @@
 import json
+import os
 
-#env var
 
-#---
 #glb_code
 
-with open('setting.json','r') as file:
+current_dir = os.getcwd()
+setting_file = os.path.join(current_dir, 'setting.json')
+
+with open(setting_file,'r') as file:
         setting = json.load(file)
 #---
 class chat:
