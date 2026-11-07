@@ -2,14 +2,14 @@
 a ai agen base on [ollama]("https://github.com/ollama/ollama")
 ## wip:  
 - user func:
-> 1. user data summaries
-> 2. chat summaries
+> 1. user data summaries(testing)
+> 2. chat summaries(testing)
 - home_page
-> 1. command list
-> 2. call user func
+> 1. command list (testing)
+> 2. call user func(testing)
 - loc & cloud ai working
-> 1. call cloud ai (working)
-> 2. rm prive data (working)
+> 1. call cloud ai (wip)
+> 2. rm prive data (wip)
 ## done
 - run bash(v1)
 - calendar (v1)

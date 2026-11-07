@@ -32,8 +32,8 @@ jobs:
         for r in $(git branch -r|grep -v HEAD|sed 's|origin/||'); do
           [ "$r" = "$CB" ] && continue
           git switch "$r"
-          git restore --source "$CB" -- readme.md
-          git add readme.md
+          git restore --source "$CB" -- README.md
+          git add README.md
           git commit -m "feat: 從 source-branch 複製特定檔案"
           git push
         done
