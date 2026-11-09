@@ -6,7 +6,7 @@ import tool
 import setting_funtion as settings
 from pathlib import Path
 
-
+messages = []
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
 current_dir = Path(__file__).resolve().parent
@@ -37,12 +37,12 @@ def chat_with_agent(prompt,tools=tools):
 
   if message.get("tool_calls"):
     messages.append(message)
-    messages.extend(tool.main(messages))
+    messages.extend(tool.main(message))
 
     final_payload = payload_packer(prompt, tools)
     final_response = requests.post(OLLAMA_URL, json=final_payload).json()
     #print(final_payload)
-    return(f"\n[Agent]: {final_response.get('message', {})}{final_response.get('content')}")
+    return(f"\n[Agent]: {final_response.get('message', {})}")
 
   else:
     return(f"\n[Agent]: {message.get('content')}")

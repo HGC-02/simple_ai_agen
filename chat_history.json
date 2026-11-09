@@ -12,5 +12,33 @@
             "user": "test all tool ",
             "inform": "\n[Agent 回答]: "
         }
+    ],
+    [
+        {
+            "type": "ai response",
+            "user": "hi",
+            "inform": "\n[Agent]: None"
+        }
+    ],
+    [
+        {
+            "type": "ai response",
+            "user": "hi",
+            "inform": "\n[Agent]: Hello! How can I assist you today?"
+        }
+    ],
+    [
+        {
+            "type": "ai response",
+            "user": "test all tool",
+            "inform": "\n[Agent]: {'role': 'assistant', 'content': \"Let's test each tool one by one to ensure they are working correctly.\\n\\nFirst, I'll test `get_topic_notes` to see if it can retrieve notes from a specified topic.\\n\\n\", 'tool_calls': [{'id': 'call_jreo56em', 'function': {'index': 0, 'name': 'get_topic_notes', 'arguments': {'topic': 'test_topic'}}}]}None"
+        }
+    ],
+    [
+        {
+            "type": "ai response",
+            "user": "test all tool",
+            "inform": "\n[Agent]: {'role': 'assistant', 'content': \"Sure, let's test each tool one by one. \\n\\nFirst, I'll start with the `run_bash` tool to execute a simple command in the shell.\\n\\n\", 'tool_calls': [{'id': 'call_kbo4qxfa', 'function': {'index': 0, 'name': 'run_bash', 'arguments': {'command': \"echo 'Testing run_bash tool'\"}}}]}"
+        }
     ]
 ]

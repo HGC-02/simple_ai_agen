@@ -137,8 +137,9 @@ def get_calendar():
 
 
 
-  def main(tool_call):
-    for tool_call in message["tool_calls"]:
+def main(tool):
+    messages = []
+    for tool_call in tool["tool_calls"]:
       func_name = tool_call["function"]["name"]
       func_args = tool_call["function"]["arguments"]
 
