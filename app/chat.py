@@ -4,6 +4,8 @@ import requests
 import os
 import setting_funtion as settings
 from pathlib import Path
+
+
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
 current_dir = Path(__file__).resolve().parent
