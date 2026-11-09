@@ -1,5 +1,5 @@
 # test 1
-- env:  
+- env:  windows 10
 - test output:  
     1. the home page 
     > input  

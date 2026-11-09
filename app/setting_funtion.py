@@ -1,11 +1,10 @@
 import json
-import os
-
+from pathlib import Path 
 
 #glb_code
 
-current_dir = os.getcwd()
-setting_file = os.path.join(current_dir, 'setting.json')
+current_dir = Path(__file__).resolve().parent
+setting_file = current_dir  /'setting.json'
 
 with open(setting_file,'r') as file:
         setting = json.load(file)

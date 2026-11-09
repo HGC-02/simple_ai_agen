@@ -2,10 +2,12 @@ import json
 import os
 import setting_funtion as settings
 import requests
-
+from pathlib import Path
+import chat
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
-UD = "UD.json"
+current_dir = Path(__file__).resolve().parent
+UD = current_dir  / "UD.json"
 # add another tool list tool:[modifly_file]
 
 tool={
@@ -36,9 +38,9 @@ def main():
     while True:
         user_input=input("what tool you want to run:")
         if user_input == "udf":
-           UDF("chat_history.json")
+           UDF(current_dir / "chat_history.json")
         elif user_input == "Chat_sum":
-           Chat_sum("chat_history.json")
+           Chat_sum(current_dir / "chat_history.json")
         elif user_input == "/home":
            return True
         else:
@@ -55,48 +57,8 @@ def UDF(chat_history):
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"base on the the chat history:{chat_history} up date the {UD}")
-    messages = [{"role": "user", "content": prompt}]
-    
-    
-    messages.append(
-              {
-                  "role": "user",
-                  "content": f"file{UD}:\n{UD_contex} \n file{chat_history}:\n{ch_contex}",
-              }
-          )
-    
-    payload = {
-              "model": MODEL_NAME,
-              "messages": messages,
-              "tools": tool,
-              "stream": False,
-          }
-    response = requests.post(OLLAMA_URL, json=payload).json
-    while True:
-        message = response.get("message", {})
-        print(message)
-        temp =+1
-        if message != {} or temp<=10:
-           break
-
-    if message.get("tool_calls"):
-        messages.append(message)
-    
-        for tool_call in message["tool_calls"]:
-          #func_name = tool_call["function"]["name"]
-          func_args = tool_call["function"]["arguments"]
-
-          output=[
-             func_args.get("file_name"),
-             func_args.get("contex")
-            ]
-        messages.append(
-                {
-                    "role": "tool",
-                    "content": str(output),
-                }
-            )
+    prompt = (f"not allow to run bash, no asking ,just do, base on the the chat history:{chat_history} up date the {UD} \n file{UD}'s contex:\n{UD_contex} \n file{chat_history}'s contex:\n{ch_contex}")
+    print(chat.chat_with_agent(prompt))
 
 
 def file(file_name:str,contex):
@@ -118,16 +80,11 @@ def Chat_sum(chat_history):
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"base on the the chat history:{chat_history} make a summaries and use about 10 to 250 word to explan the chat, mostly is mark the informations \n")
+    prompt = (f"base on the the chat history make a summaries and use about 10 to 250 word to explan the chat, mostly is mark the informations \n file{chat_history}:\n{ch_contex}")
     messages = [{"role": "user", "content": prompt}]
     
     
-    messages.append(
-              {
-                  "role": "user",
-                  "content": f"file{chat_history}:\n{ch_contex}",
-              }
-          )
+
     
     payload = {
               "model": MODEL_NAME,
@@ -152,6 +109,6 @@ def Chat_sum(chat_history):
     messages.append(
               {
                   "role": "tool",
-                  "content": str(output),
+                  "content": output,
               }
           )

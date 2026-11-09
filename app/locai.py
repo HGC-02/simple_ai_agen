@@ -26,6 +26,7 @@ def main():
           continue
         elif user_input == "/home":
           return True
+          break
         
       else:
         pass #undone

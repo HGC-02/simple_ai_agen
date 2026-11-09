@@ -1,0 +1,16 @@
+[
+    [
+        {
+            "type": "ai response",
+            "user": "hi",
+            "inform": "\n[Agent 回答]: Hi! 👋 How can I help you today?"
+        }
+    ],
+    [
+        {
+            "type": "ai response",
+            "user": "test all tool ",
+            "inform": "\n[Agent 回答]: "
+        }
+    ]
+]

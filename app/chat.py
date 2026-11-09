@@ -3,11 +3,12 @@ import subprocess
 import requests
 import os
 import setting_funtion as settings
-
+from pathlib import Path
 OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
-
-with open('tools_list.json', 'r') as file:
+current_dir = Path(__file__).resolve().parent
+setting_file = current_dir  / 'tools_list.json'
+with open(setting_file, 'r') as file:
     tools = json.load(file)
 def get_history_name():
   pass
@@ -200,7 +201,7 @@ def chat_with_agent(prompt):
     }
     final_response = requests.post(OLLAMA_URL, json=final_payload).json()
     #print(final_payload)
-    return(f"\n[Agent 回答]: {final_response.get('message', {}).get('content')}")
+    return(f"\n[Agent 回答]: {final_response.get('message', {})}{final_response.get('content')}")
 
   else:
     return(f"\n[Agent 回答]: {message.get('content')}")
