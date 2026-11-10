@@ -59,7 +59,7 @@ def UDF(chat_history):
        ch_contex = json.load(file)
 
     prompt = (f"not allow to run bash, no asking ,just do, base on the the chat history:{chat_history} up date the {UD} \n file{UD}'s contex:\n{UD_contex} \n file{chat_history}'s contex:\n{ch_contex}")
-    print(chat.chat_with_agent(prompt))
+    print(chat.chat_with_agent(prompt))#rebuild by the chang of chat.py
 
 
 def file(file_name:str,contex):
