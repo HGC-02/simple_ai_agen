@@ -59,8 +59,12 @@ def UDF(chat_history):
        ch_contex = json.load(file)
 
     prompt = (f"not allow to run bash, no asking ,just do, base on the the chat history:{chat_history} up date the {UD} \n file{UD}'s contex:\n{UD_contex} \n file{chat_history}'s contex:\n{ch_contex}")
-    print(chat.chat_with_agent(prompt))#rebuild by the chang of chat.py
-
+    payload= chat.payload_packer(prompt,tool)#rebuild by the chang of chat.py
+    message=chat.call(payload)
+    
+    
+    func_args=message["function"]["argument"]
+    file(UD,func_args.get("contex"))
 
 def file(file_name:str,contex):
     print(f"file name:{file_name} \n file conxet{contex} \n are you should i change Y/N? \n your anser:")
