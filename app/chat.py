@@ -22,15 +22,20 @@ def payload_packer(prompt,tools_list):
   payload = {
       "model": MODEL_NAME,
       "messages": messages,
-      "tools": tools,
+      "tools": tools_list,
       "stream": False,
   }
   return payload
 
 def call(payload):
-  response = requests.post(OLLAMA_URL, json=payload).json()
-  message = response.get("message", {})
-  return message
+  while True:
+    try:
+      response = requests.post(OLLAMA_URL, json=payload).json()
+      break
+    except requests.exceptions.RequestException as e:
+      print(f"Request failed: {e}. Retrying...")
+  
+  return response.get("message", {})
 
 def chat_with_agent(prompt,tools=tools):
   

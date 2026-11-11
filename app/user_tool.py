@@ -11,7 +11,8 @@ UD = current_dir  / "UD.json"
 his= current_dir / "history"
 # add another tool list tool:[modifly_file]
 
-tool={
+tool=[
+    {
     "type": "function",
     "function": {
         "name": "write_file",
@@ -35,6 +36,17 @@ tool={
         },
     },
 }
+]
+def Add_file(file_name:str,contex):
+    print(f"file name:{file_name} \n file conxet{contex} \n should i change Y/N? \n your anser:")
+    x = input()
+    if x == "Y" or x == "y":
+      fd = os.open(file_name, os.O_WRONLY | os.O_CREAT)
+      byte_data = contex.encode("utf-8")
+      bytes_written = os.write(fd, byte_data)
+
+    else:
+       print("ok remain unchange")
 
 def main():
     while True:
@@ -50,33 +62,36 @@ def main():
 
 
 def UDF(chat_history):
-    with open(UD,"r") as file:
-        try:
-          UD_contex = json.load(file)
-        except:
-          UD_contex="new user no data about him/her"
-          
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"not allow to run bash, no asking ,just do, base on the the chat history:{chat_history} up date the {UD} \n file{UD}'s contex:\n{UD_contex} \n file{chat_history}'s contex:\n{ch_contex}")
-    payload= chat.payload_packer(prompt,tool)#rebuild by the chang of chat.py
+    with open(UD,"r") as file:
+        try:
+          UD_contex = json.load(file)
+          prompt = (f"not allow to run bash, no asking ,just do, base on the the chat history:{chat_history} up date the {UD} \n file{UD}'s contex:\n{UD_contex} \n file{chat_history}'s contex:\n{ch_contex}")
+        except:
+          UD_contex={}
+          prompt = (f"not allow to run bash, no asking ,just do, base on the the chat history:{chat_history} to make a user data file in json format, file name is {UD} \n file{chat_history}'s contex:\n{ch_contex}")
+    print(f"UD_contex:{UD_contex}")
+    
+   
+    
+    payload= chat.payload_packer(prompt,tool)
+    print(f" \n \n payload:{payload}")
     message=chat.call(payload)
+    print(f" \n \n message from agent:{message}")
     
     
-    func_args=message["function"]["argument"]
-    file(UD,func_args.get("contex"))
+    for tool_call in message["tool_calls"]:
+        print(f" \n \n message from agent:{tool_call}")
+        func_name = tool_call["function"]["name"]
+        func_args=tool_call["function"]["arguments"]
+        print(f" \n \n func_args:{func_args}")
+        print(f" \n \n contex:{func_args.get('contex')}")
+        Add_file(UD,str(func_args.get("contex")))
+    print(f"UD file has been update with the new contex:{func_args.get('contex')}")
+    return 
 
-def file(file_name:str,contex):
-    print(f"file name:{file_name} \n file conxet{contex} \n should i change Y/N? \n your anser:")
-    x = input()
-    if x == "Y" or x == "y":
-      fd = os.open(file_name, os.O_WRONLY | os.O_CREAT)
-      byte_data = contex.encode("utf-8")
-      bytes_written = os.write(fd, byte_data)
-
-    else:
-       print("ok remain unchange")
 
 
 
@@ -87,9 +102,21 @@ def Chat_sum(chat_history):
        ch_contex = json.load(file)
 
     prompt = (f"base on the the chat history make a summaries and use about 10 to 250 word to explan the chat, mostly is mark the informations,use markdown format,file name use DATE_OF_FILE.md \n file{chat_history}:\n{ch_contex}")
-    payload=chat.payload_packer(prompt)
+    payload=chat.payload_packer(prompt,tool)
     
     message = chat.call(payload)
+    
+    print(f" \n \n message from agent full:{message}")
+    for tool_call in message["tool_calls"]:
+        print(f" \n \n message from agent:{tool_call}")
+        func_name = tool_call["function"]["name"]
+        func_args=tool_call["function"]["arguments"]
+        print(f" \n \n func_args:{func_args}")
+        print(f" \n \n contex:{func_args.get('contex')}")
+    Add_file((his / func_args.get("file_name")),str(func_args.get("contex")))
+    return
 
-    func_args=message["function"]["name"]
-    file(his / func_args.get("file_name"),func_args.get("contex"))
+
+
+#UDF(chat_history=(current_dir / "chat_history.json"))
+Chat_sum(chat_history=(current_dir / "chat_history.json"))
