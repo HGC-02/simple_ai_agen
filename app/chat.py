@@ -27,17 +27,20 @@ def payload_packer(prompt,tools_list):
   }
   return payload
 
+def call(payload):
+  response = requests.post(OLLAMA_URL, json=payload).json()
+  message = response.get("message", {})
+  return message
 
 def chat_with_agent(prompt,tools=tools):
   
   payload = payload_packer(prompt, tools)
 
-  response = requests.post(OLLAMA_URL, json=payload).json()
-  message = response.get("message", {})
+  message = call(payload)
 
   if message.get("tool_calls"):
     messages.append(message)
-    messages.extend(tool.main(message))
+    messages.extend(tool.main(message))#call tool function
 
     final_payload = payload_packer(prompt, tools)
     final_response = requests.post(OLLAMA_URL, json=final_payload).json()
