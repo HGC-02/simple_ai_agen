@@ -8,6 +8,7 @@ OLLAMA_URL = settings.chat.url_api()
 MODEL_NAME = settings.chat.model_name()
 current_dir = Path(__file__).resolve().parent
 UD = current_dir  / "UD.json"
+his= current_dir / "history"
 # add another tool list tool:[modifly_file]
 
 tool={
@@ -67,7 +68,7 @@ def UDF(chat_history):
     file(UD,func_args.get("contex"))
 
 def file(file_name:str,contex):
-    print(f"file name:{file_name} \n file conxet{contex} \n are you should i change Y/N? \n your anser:")
+    print(f"file name:{file_name} \n file conxet{contex} \n should i change Y/N? \n your anser:")
     x = input()
     if x == "Y" or x == "y":
       fd = os.open(file_name, os.O_WRONLY | os.O_CREAT)
@@ -85,35 +86,10 @@ def Chat_sum(chat_history):
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"base on the the chat history make a summaries and use about 10 to 250 word to explan the chat, mostly is mark the informations \n file{chat_history}:\n{ch_contex}")
-    messages = [{"role": "user", "content": prompt}]
+    prompt = (f"base on the the chat history make a summaries and use about 10 to 250 word to explan the chat, mostly is mark the informations,use markdown format,file name use DATE_OF_FILE.md \n file{chat_history}:\n{ch_contex}")
+    payload=chat.payload_packer(prompt)
     
-    
+    message = chat.call(payload)
 
-    
-    payload = {
-              "model": MODEL_NAME,
-              "messages": messages,
-              "tools": tool,
-              "stream": False,
-          }
-    response = requests.post(OLLAMA_URL, json=payload).json()
-    message = response.get("message", {})
-
-    if message.get("tool_calls"):
-        messages.append(message)
-    
-        for tool_call in message["tool_calls"]:
-          func_name = tool_call["function"]["name"]
-          func_args = tool_call["function"]["arguments"]
-
-          output=[
-             func_args.get("file_name"),
-             func_args.get("contex")
-          ]
-    messages.append(
-              {
-                  "role": "tool",
-                  "content": output,
-              }
-          )
+    func_args=message["function"]["name"]
+    file(his / func_args.get("file_name"),func_args.get("contex"))
