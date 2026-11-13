@@ -41,6 +41,8 @@ def Add_file(file_name:str,contex):
     print(f"file name:{file_name} \n file conxet{contex} \n should i change Y/N? \n your anser:")
     x = input()
     if x == "Y" or x == "y":
+
+      #switch to with methon
       fd = os.open(file_name, os.O_WRONLY | os.O_CREAT)
       byte_data = contex.encode("utf-8")
       bytes_written = os.write(fd, byte_data)
