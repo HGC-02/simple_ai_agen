@@ -16,7 +16,7 @@ tool=[
     "type": "function",
     "function": {
         "name": "write_file",
-        "description": "將指定的內容寫入或覆蓋到目標檔案中",
+        "description": "將指定的內容覆蓋到目標檔案中",
         "parameters": {
             "type": "object",
             "properties": {
@@ -41,11 +41,9 @@ def Add_file(file_name:str,contex):
     print(f"file name:{file_name} \n file conxet{contex} \n should i change Y/N? \n your anser:")
     x = input()
     if x == "Y" or x == "y":
-
-      #switch to with methon
-      fd = os.open(file_name, os.O_WRONLY | os.O_CREAT)
-      byte_data = contex.encode("utf-8")
-      bytes_written = os.write(fd, byte_data)
+      #switch to with methon(done)
+      with open(file_name,"w") as f:
+        f.write(contex)
 
     else:
        print("ok remain unchange")
@@ -120,5 +118,5 @@ def Chat_sum(chat_history):
 
 
 
-#UDF(chat_history=(current_dir / "chat_history.json"))
+UDF(chat_history=(current_dir / "chat_history.json"))
 Chat_sum(chat_history=(current_dir / "chat_history.json"))
