@@ -5,13 +5,18 @@ import os
 import setting_funtion as settings
 from pathlib import Path
 
+current_dir = Path(__file__).resolve().parent
 
+class get_arched_history:
+  def get_name():
+    pass
+  def get_contex():
+    pass
 
-def get_history_name():
-  pass
-def get_chat_history():
-  pass
-
+def get_current_chat_history():
+  with open((current_dir/"chat_history.json","r")) as f:
+    hist=f
+  return f
 # function of tools
 def save_to_topic_note(topic, filename, content):
   # 防禦性檢查：若 topic 或 filename 丟失或為 None 賦予預設值
