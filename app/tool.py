@@ -2,14 +2,29 @@ import json
 import subprocess
 import requests
 import os
+import sqlite3 
 import setting_funtion as settings
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
 
 class get_arched_history:
-  def get_name():
-    pass
+  def __init__(self,sql):
+    sql_dir= current_dir / "history" / "history.db"
+    try:
+      sql=sqlite3.connect(sql_dir)
+    except:
+      with open(sql_dir,"w") as f:
+        f.close
+      sql=sqlite3.connect(sql_dir)
+      sql_curr=sql.cursor()
+      pass #add table 
+      sql_curr.execute("")
+      sql.commit()
+      self.sql=sql 
+  def get_name(self):
+    curr=self.sql.cursor()
+    
   def get_contex():
     pass
 
