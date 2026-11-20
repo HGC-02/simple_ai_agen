@@ -9,29 +9,39 @@ from pathlib import Path
 current_dir = Path(__file__).resolve().parent
 
 class get_arched_history:
-  def __init__(self,sql):
-    sql_dir= current_dir / "history" / "history.db"
-    try:
-      sql=sqlite3.connect(sql_dir)
-    except:
-      with open(sql_dir,"w") as f:
-        f.close
-      sql=sqlite3.connect(sql_dir)
-      sql_curr=sql.cursor()
-      pass #add table 
-      sql_curr.execute("")
-      sql.commit()
-      self.sql=sql 
-  def get_name(self):
+  
+  sql_dir= current_dir / "history" / "history.db"
+  try:
+    sql=sqlite3.connect(sql_dir)
+  except:
+    with open(sql_dir,"w") as f:
+      f.close
+    sql=sqlite3.connect(sql_dir)
+    sql_curr=sql.cursor()
+    pass #add table 
+    sql_curr.execute("")
+    sql.commit() 
+  def get_name():
+    self=get_arched_history
     curr=self.sql.cursor()
+    ans=curr.execute("SELECT ").fetchall()
+    return ans
     
-  def get_contex():
-    pass
-
+  def get_contex_title(id,by="id"):
+    self=get_arched_history
+    curr=self.sql.cursor()
+    ans=curr.execute(f"SELECT title_of_history FROM summaries WHERE {by}={id}").fetchall
+    return ans
+  def get_contex(title):
+    self=get_arched_history
+    curr=self.sql.cursor()
+    file_name=curr.execute(f"SELECT file_name FROM file_lib WHERE title_of_history = {title} ").fetchall
+    with open(file_name,"r") as f:
+      return f
 def get_current_chat_history():
   with open((current_dir/"chat_history.json","r")) as f:
     hist=f
-  return f
+  return hist
 # function of tools
 def save_to_topic_note(topic, filename, content):
   # 防禦性檢查：若 topic 或 filename 丟失或為 None 賦予預設值
