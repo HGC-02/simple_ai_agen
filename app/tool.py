@@ -21,16 +21,18 @@ class get_arched_history:
     pass #add table 
     sql_curr.execute("")
     sql.commit() 
-  def get_name():
+    sql.close()
+  def get_by_tag():
     self=get_arched_history
     curr=self.sql.cursor()
-    ans=curr.execute("SELECT ").fetchall()
+    ans=curr.execute("SELECT * ").fetchall()
     return ans
     
   def get_contex_title(id,by="id"):
     self=get_arched_history
     curr=self.sql.cursor()
-    ans=curr.execute(f"SELECT title_of_history FROM summaries WHERE {by}={id}").fetchall
+    ans=curr.execute(f"SELECT title_of_history FROM summaries WHERE {by} = ?",
+    (id)).fetchall
     return ans
   def get_contex(title):
     self=get_arched_history
