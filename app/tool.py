@@ -5,6 +5,7 @@ import os
 import sqlite3 
 import setting_funtion as settings
 from pathlib import Path
+import init_database as init_db
 
 current_dir = Path(__file__).resolve().parent
 
@@ -16,12 +17,8 @@ class get_arched_history:
   except:
     with open(sql_dir,"w") as f:
       f.close
-    sql=sqlite3.connect(sql_dir)
-    sql_curr=sql.cursor()
-    pass #add table 
-    sql_curr.execute("")
-    sql.commit() 
-    sql.close()
+    init_db.file_path(sql_dir)
+    init_db.catalog(sql_dir)
   def get_by_tag():
     self=get_arched_history
     curr=self.sql.cursor()
