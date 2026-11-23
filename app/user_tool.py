@@ -1,7 +1,9 @@
+import init_database as init_db
 import json
 import os
 import setting_funtion as settings
 import requests
+import sqlite3
 from pathlib import Path
 import chat
 OLLAMA_URL = settings.chat.url_api()
@@ -9,6 +11,7 @@ MODEL_NAME = settings.chat.model_name()
 current_dir = Path(__file__).resolve().parent
 UD = current_dir  / "UD.json"
 his= current_dir / "history"
+data_base=his/"history.db"
 # add another tool list tool:[modifly_file]
 
 tool=[
@@ -47,6 +50,22 @@ def Add_file(file_name:str,contex):
 
     else:
        print("ok remain unchange")
+
+class ai_sql:
+    def add_sql_history():
+        try:
+            connect=sqlite3.connect(data_base)
+        except:
+            with open(data_base,"w") as f:
+               f.close
+            init_db.catalog(data_base)
+            init_db.file_path(data_base)
+            
+        curr=connect.cursor()
+        curr.execute("")#add in table catalog
+        curr.execute("")#add in file catlog
+        connect.commit()
+        connect.close()
 
 def main():
     while True:
