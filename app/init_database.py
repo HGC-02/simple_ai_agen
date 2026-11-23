@@ -9,7 +9,7 @@ def catalog(database):
 def file_path(database):
     d=sqlite3.connect(database)
     d_curr=d.cursor()
-    d_curr.execute("")
+    d_curr.execute("")#name file path (id PK ,title FK ,path(path return to ai))
     d.commit()
     d.close
 

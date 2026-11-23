@@ -37,7 +37,7 @@ class get_arched_history:
   def get_contex(title):
     self=get_arched_history
     curr=self.sql.cursor()
-    file_name=curr.execute(f"SELECT file_name FROM file_lib WHERE title_of_history = {title} ").fetchall
+    file_name=curr.execute(f"SELECT file_name FROM file_lib WHERE title_of_history = ? ",(title)).fetchall
     with open(file_name,"r") as f:
       return f
 def get_current_chat_history():

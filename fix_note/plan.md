@@ -10,3 +10,5 @@
 1. make all catalog in to sql by id time title tag
 
 2. make the calendar in to sql
+
+3. add tool dis in both tools_list.json and in user tool 
