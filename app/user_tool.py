@@ -4,6 +4,7 @@ import os
 import setting_funtion as settings
 import requests
 import sqlite3
+from datetime import datetime,timezone
 from pathlib import Path
 import chat
 OLLAMA_URL = settings.chat.url_api()
@@ -52,7 +53,8 @@ def Add_file(file_name:str,contex):
        print("ok remain unchange")
 
 class ai_sql:
-    def add_sql_history():
+    def add_sql_history(title,type,name):
+        
         try:
             connect=sqlite3.connect(data_base)
         except:
@@ -62,7 +64,7 @@ class ai_sql:
             init_db.file_path(data_base)
             
         curr=connect.cursor()
-        curr.execute("")#add in table catalog
+        curr.execute("INSERT INTO file_path (title,path)VALUES(?,?)",(title,name))#add in table catalog
         curr.execute("")#add in file catlog
         connect.commit()
         connect.close()
