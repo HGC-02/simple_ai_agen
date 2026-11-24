@@ -22,7 +22,7 @@ class get_arched_history:
   def get_by_tag(tag):
     self=get_arched_history
     curr=self.sql.cursor()
-    ans=curr.execute("SELECT * FROM catalog WHERE tag = ?",(tag).fetchall()
+    ans=curr.execute("SELECT * FROM catalog WHERE tag = ?",(tag)).fetchall()
     return ans
     
   def get_contex_title(id,by="id"):

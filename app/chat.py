@@ -16,8 +16,10 @@ with open(tools_file, 'r') as file:
 
 #--- move ---
 #--- rebuild ---
-def payload_packer(prompt,tools_list):
+def payload_packer(prompt,tools_list,sysprompt=None):
   messages = [{"role": "user", "content": prompt}]
+  if sysprompt:
+    messages.insert(0, {"role": "system", "content": sysprompt})
 
   payload = {
       "model": MODEL_NAME,
