@@ -16,7 +16,7 @@ with open(tools_file, 'r') as file:
 
 #--- move ---
 #--- rebuild ---
-def payload_packer(prompt,tools_list,sysprompt=None):
+def payload_packer(prompt, tools_list=None, sysprompt=None, force_tool=None):
   messages = [{"role": "user", "content": prompt}]
   if sysprompt:
     messages.insert(0, {"role": "system", "content": sysprompt})
@@ -27,6 +27,8 @@ def payload_packer(prompt,tools_list,sysprompt=None):
       "tools": tools_list,
       "stream": False,
   }
+  if force_tool:
+    payload["tool_choice"] = force_tool
   return payload
 
 def call(payload):
@@ -37,6 +39,8 @@ def call(payload):
     except requests.exceptions.RequestException as e:
       print(f"Request failed: {e}. Retrying...")
   
+  if "choices" in response:
+    return response["choices"][0].get("message", {})
   return response.get("message", {})
 
 def chat_with_agent(prompt,tools=tools):

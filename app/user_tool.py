@@ -8,12 +8,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 import chat
 import time
-OLLAMA_URL = settings.chat.url_api()
-MODEL_NAME = settings.chat.model_name()
-current_dir = Path(__file__).resolve().parent
-UD = current_dir  / "UD.md"
-his= current_dir / "history"
-data_base=his/"history.db"
+
 tool = [
     {
     "type": "function",
@@ -68,6 +63,15 @@ chatsumtool=[
     },
 }
 ]
+
+OLLAMA_URL = settings.chat.url_api()
+MODEL_NAME = settings.chat.model_name()
+current_dir = Path(__file__).resolve().parent
+UD = current_dir  / "UD.md"
+his= current_dir / "history"
+data_base=his/"history.db"
+
+
 def UID():
     return str(time.time()%7*time.time()%2024)
 def Add_file(file_name:str,contex):
@@ -152,26 +156,28 @@ def UDF(chat_history):
 # add a chat summaries
 
 def Chat_sum(chat_history):
-    name = f"{UID()}.md"
+    name = (his/f"{UID()}.md")
     with open(chat_history,"r") as file:
        ch_contex = json.load(file)
 
-    prompt = (f"must call tool, no asking ,just do, base on the the chat history:{chat_history} to make a summaries and make it in markdown format,you need to use tool add_history,btw no asking and must call tool\n file{chat_history}:\n{ch_contex}")
-    payload=chat.payload_packer(prompt,chatsumtool)
-    
+    prompt = (f"base on the the chat history:{chat_history} to make a summaries and put it into Markdown format and only need the summaries \n file{chat_history}:\n{ch_contex}")
+    payload=chat.payload_packer(prompt)
     message = chat.call(payload)
-    
-    print(f" \n \n message from agent full:{message}")
-    for tool_call in message["tool_calls"]:
-        print(f" \n \n message from agent:{tool_call}")
-        func_name = tool_call["function"]["name"]
-        func_args=tool_call["function"]["arguments"]
-        print(f" \n \n func_args:{func_args}")
-        print(f" \n \n contex:{func_args.get('contex')}")
-        ai_sql.add_sql_history(func_args.get("title"),func_args.get("tag"),name)
-        Add_file(name,str(func_args.get("contex")))
-    return
+    contex = message.get("content")
 
+    prompt = (f"base on the the chat history:{chat_history} to make a tag for the summaries and only need the tag \n file{chat_history}:\n{ch_contex}\n summaries:\n{contex}")
+    payload=chat.payload_packer(prompt)
+    message = chat.call(payload)
+    tag = message.get("content")
+
+    prompt = (f"base on the the chat history:{chat_history} to make a title for the summaries and only need the title \n file{chat_history}:\n{ch_contex}\n summaries:\n{contex}\n tag:\n{tag}")
+    payload=chat.payload_packer(prompt)
+    message = chat.call(payload)
+    title = message.get("content")
+
+    ai_sql.add_sql_history(title=title,type_name=tag,name=str(name))
+    Add_file(str(name),contex)
+#by 3 way push 1.make contex 2.make a tag for them 3.add both contex and tag into a sql database with a file path to the contex file
 
 
 #UDF(chat_history=(current_dir / "chat_history.json"))

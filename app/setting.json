@@ -2,7 +2,7 @@
   {
     "id": "1",
     "settings": {
-      "apiurl": "http://localhost:11434/api/chat",
+      "apiurl": "http://localhost:11434/v1/chat/completions",
       "MODEL_NAME": "mistral-nemo"
     }
   },
